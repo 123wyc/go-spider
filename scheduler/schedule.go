@@ -53,6 +53,7 @@ func (scheduler *Scheduler) Run() {
 			case w := <-scheduler.workerChan:
 				/**
 				worker的循环会不停的将 自身的chan写入二级通道。 代表这个workchan对应的worker是空闲状态
+				对比一级管道抢占式的获取任务，可以通过自定义逻辑去分配任务。 避免出现类似饥饿线程
 				*/
 				workerQ = append(workerQ, w)
 
