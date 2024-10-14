@@ -23,9 +23,9 @@ type Engine struct {
 
 func (G_engine *Engine) Run(requests ...Request) {
 
-	out := make(chan *ParseResult)
+	out := make(chan *ParseResult) // 创建结果队列
 
-	G_engine.Scheduler.Run()
+	G_engine.Scheduler.Run() // 启动调度器
 
 	go func() {
 		var wg sync.WaitGroup
@@ -85,20 +85,21 @@ func creatWorker(in chan *Request, out chan *ParseResult, schduler Scheduler, wg
 
 		for {
 			var timer = time.NewTicker(5 * time.Second)
+			//
 			schduler.WorkReady(in)
 			select {
-			case request := <-in:
 
+			case request := <-in:
+				//下载
 				fmt.Print(">>>><<<<<")
 				node, err := downloader.DownLoad(request.Url)
-
 				if nil != err {
-
 					fmt.Printf("fetch url %s error,error : %v", request.Url, err)
 					continue
 				}
-				parseResult := request.Parsefunc(node)
 
+				//解析返回值
+				parseResult := request.Parsefunc(node)
 				out <- &parseResult
 
 			case <-timer.C:
